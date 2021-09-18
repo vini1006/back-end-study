@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/welcome', (req, res) => {
-    console.log('Welcome');
+    console.log('Welcome!');
     return res.render('welcome.html')
 });
 
