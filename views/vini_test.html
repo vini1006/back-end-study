@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="main">
+        <custom-input></custom-input>
+    </div>
+    
+    <script>
+        class customInput extends HTMLElement {
+
+            constructor () {
+                super();
+                this.setAttribute('data-vini-count', 0);
+                this.setAttribute('class', 'custom-input')
+            }
+
+            render(labelText = '안녕하세요.', buttonText = 'Click') {
+                console.log('called')
+                this.innerHTML = '';
+
+                const label = (() => {
+                    const _label = document.createElement('label')
+
+                    _label.setAttribute('id', 'vini_label')
+                    _label.innerHTML = labelText;
+
+                    return _label
+                })()
+                
+                const button = (() => {
+                    const _button = document.createElement('button')
+                    _button.setAttribute('id', 'vini_button')
+
+                    const _buttonText = document.createTextNode(buttonText)
+                    _button.appendChild(_buttonText);
+                    // _button.innerText(buttonText)
+
+                    return _button;
+                })();
+
+                const input = document.createElement('input');
+
+                this.appendChild(label)
+                this.appendChild(button)
+                this.appendChild(input)
+            }
+
+            addEvent() {
+                const button = this.querySelector('#vini_button');
+                button.addEventListener('click', (e) => {
+                    const _this = e.currentTarget;
+                    const wrap = _this.closest('.custom-input');
+                    const updateCount = parseInt(wrap.getAttribute('data-vini-count')) + 1;
+                    wrap.setAttribute('data-vini-count', updateCount);
+                });
+            }
+
+            connectedCallback() {
+                this.render();
+                this.addEvent();
+            }
+
+            static get observedAttributes() {
+                return ['data-vini-count']
+            }
+            
+            attributeChangedCallback(name, oldValue, newValue) {
+                console.log('name : ', name, ' oldValue: ', oldValue, ' newValue: ', newValue)
+
+                const vini_count_change = () => {
+                    const button = this.querySelector('#vini_button');
+                    const old_count = oldValue;
+                    const new_count = newValue;
+                    if(old_count == 3) button.style.display = 'none';
+                    const label = this.querySelector('#vini_label');
+                    const og_label_html = label.innerHTML;
+                    
+                    label.innerHTML = `안녕하세요 ${old_count} to ${new_count}`;
+                }
+                
+                switch(name) {
+                    case 'data-vini-count':
+                        vini_count_change();
+                        break;
+                }
+            }
+
+        }
+
+        customElements.define('custom-input', customInput);
+
+    </script>
+</body>
+</html>
